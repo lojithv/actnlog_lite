@@ -23,7 +23,7 @@ class _SettingsState extends State<Settings> {
 
   final Uri _url = Uri.parse('https://www.buymeacoffee.com/lojithvdev');
   final Uri _privacyPolicy = Uri.parse(
-      'https://www.privacypolicies.com/live/7c7e6372-8c32-4f63-a486-a471aec989e8');
+      'https://www.privacypolicies.com/live/08897e59-7c8b-4584-94b7-c2fdee0bfad0');
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
