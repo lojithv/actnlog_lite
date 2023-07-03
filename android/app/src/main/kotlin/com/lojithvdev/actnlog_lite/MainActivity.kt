@@ -1,4 +1,4 @@
-package com.example.actnlog_lite
+package com.lojithvdev.actnlog_lite
 
 import io.flutter.embedding.android.FlutterActivity
 
