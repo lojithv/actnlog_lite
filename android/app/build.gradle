@@ -64,6 +64,9 @@ android {
                 keyPassword 'firstapp123'
             }
         }
+        manifestPlaceholders += [
+                'appAuthRedirectScheme': ''
+        ]
     }
 
     buildTypes {

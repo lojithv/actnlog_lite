@@ -1,14 +1,30 @@
 import 'package:actnlog_lite/pages/home_page.dart';
+import 'package:actnlog_lite/pages/login.dart';
 import 'package:actnlog_lite/pages/settings.dart';
 import 'package:actnlog_lite/pages/loading_screen.dart';
 import 'package:actnlog_lite/pages/timer_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
+  var supabaseURL = dotenv.env['SUPABASE_URL'];
+  var supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+
+  if (supabaseURL != null && supabaseAnonKey != null) {
+    await Supabase.initialize(
+      url: supabaseURL,
+      anonKey: supabaseAnonKey,
+    );
+  }
   runApp(const MyApp());
 }
+
+final supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -36,6 +52,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true),
       routes: {
         '/': (context) => const LoadingScreen(),
+        '/login':(context)=>const LoginPage(),
         '/home': (context) => const HomePage(title: 'Activlog'),
         '/settings': (context) => const Settings(),
         '/timer': (context) => const TimerView()
