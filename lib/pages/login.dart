@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -22,6 +23,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  late List<StreamSubscription> authStateSubs = [];
+
   @override
   void initState() {
     _setupAuthListener();
@@ -29,18 +32,24 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _setupAuthListener() {
-    supabase.auth.onAuthStateChange.listen((data) {
-      final event = data.event;
-      if (event == AuthChangeEvent.signedIn) {
-        print('Sign in.............................123');
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (context) => const HomePage(title: 'home'),
-        //   ),
-        // );
+    authStateSubs.add(supabase.auth.onAuthStateChange.listen((data) {
+      if (mounted) {
+        if (data != null) {
+          final event = data.event;
+          if (event == AuthChangeEvent.signedIn) {
+            authStateSubs.forEach((sub) => sub.cancel());
+            print('Sign in.............................123');
+            navigatorKey.currentState?.pushNamed('/home');
+          }
+        }
       }
-    });
+    }));
+  }
+
+  @override
+  void dispose() {
+    authStateSubs.forEach((sub) => sub.cancel());
+    super.dispose();
   }
 
   /// Function to generate a random 16 character string.

@@ -26,6 +26,9 @@ Future<void> main() async {
 
 final supabase = Supabase.instance.client;
 
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -34,6 +37,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Actnlog Lite',
+      navigatorKey: navigatorKey,
       theme: ThemeData(
           brightness: Brightness.dark,
           primaryColor: Colors.lightBlue[800],

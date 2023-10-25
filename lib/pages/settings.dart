@@ -1,3 +1,4 @@
+import 'package:actnlog_lite/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -250,6 +251,23 @@ class _SettingsState extends State<Settings> {
                       height: 35,
                     ),
                   )),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  child: const Text(
+                    "Log out",
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  onPressed: () => {
+                    supabase.auth.signOut().then((value) => {
+                    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false)
+                    })
+                  }
+              ),
             ),
           ],
         ),
