@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../main.dart';
 import '../store/activity_preset_store.dart';
 import '../store/current_activity_store.dart';
 import '../store/timer.dart';
@@ -27,6 +28,8 @@ class _ActivityPresetsListState extends State<ActivityPresetsList> {
   final TimerController timerController = Get.put(TimerController());
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  final _stream = supabase.from('ongoing-activities').stream(primaryKey: ['id']).eq('user_id', supabase.auth.currentUser?.id);
 
   @override
   void initState() {
@@ -195,6 +198,19 @@ class _ActivityPresetsListState extends State<ActivityPresetsList> {
                     const SizedBox(
                       height: 15,
                     ),
+                     Center(child: supabase.auth.currentUser?.id != null ? StreamBuilder(
+                      stream: _stream,
+                      builder: (context, snapshot) {
+                        print("snap data");
+                        print(snapshot.data);
+                        if(snapshot.data != null && snapshot.data!.isNotEmpty){
+                          return Text('Text', style: TextStyle(color: Colors.white70));
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                        // Return your widget with the data from the snapshot
+                      },
+                    ):SizedBox.shrink()),
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
