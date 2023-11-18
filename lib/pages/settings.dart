@@ -263,9 +263,9 @@ class _SettingsState extends State<Settings> {
                     style: TextStyle(color: Colors.white70),
                   ),
                   onPressed: () => {
-                    supabase.auth.signOut().then((value) => {
-                    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false)
-                    })
+                    // supabase.auth.signOut().then((value) => {
+                    // Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false)
+                    // })
                   }
               ),
             ),

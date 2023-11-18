@@ -1,30 +1,34 @@
+import 'dart:io';
+
 import 'package:actnlog_lite/pages/home_page.dart';
 import 'package:actnlog_lite/pages/login.dart';
 import 'package:actnlog_lite/pages/settings.dart';
 import 'package:actnlog_lite/pages/loading_screen.dart';
 import 'package:actnlog_lite/pages/timer_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'firebase_options.dart';
+
+late final FirebaseApp app;
+late final FirebaseAuth auth;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-  var supabaseURL = dotenv.env['SUPABASE_URL'];
-  var supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+  app = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  auth = FirebaseAuth.instanceFor(app: app);
 
-  if (supabaseURL != null && supabaseAnonKey != null) {
-    await Supabase.initialize(
-      url: supabaseURL,
-      anonKey: supabaseAnonKey,
-    );
-  }
   runApp(const MyApp());
 }
-
-final supabase = Supabase.instance.client;
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
@@ -57,7 +61,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoadingScreen(),
         '/login':(context)=>const LoginPage(),
-        '/home': (context) => const HomePage(title: 'Activlog'),
+        '/home': (context) => const HomePage(),
         '/settings': (context) => const Settings(),
         '/timer': (context) => const TimerView()
       },

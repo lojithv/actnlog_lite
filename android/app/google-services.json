@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "189945015099",
+    "project_id": "actnlog-lite",
+    "storage_bucket": "actnlog-lite.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189945015099:android:42518b63d0bc2fff21a51e",
+        "android_client_info": {
+          "package_name": "com.lojithvdev.actnlog_lite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189945015099-usmk09r6m2neen2gcisi5nllomiogskb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVJUuQ_nqWUz1-0mNWsOmPEjXBWG-2_Ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189945015099-srnrrudv520ak779nik1fjjrbq0dr93q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "189945015099-066c0n208aed4b0u0cncs0t9flpbptd0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.actnlogLite.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,6 +4,7 @@ import 'package:actnlog_lite/models/activity_preset.dart';
 import 'package:actnlog_lite/models/completed_activity.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +23,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   var presets = [];
   var completedActivities = [];
 
+  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  bool _isSignedIn = false;
+
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   final ActivityPresetStoreController activityPresetStoreController =
@@ -34,8 +38,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 5), () {
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+        setState(() {
+          _isSignedIn = account != null;
+        });
+        // Redirect based on sign-in status
+        _redirectBasedOnSignInStatus();
+      });
+
+      // Check if already signed in
+      _googleSignIn.signInSilently();
     });
+
     _prefs.then((SharedPreferences prefs) {
       var presetsString = prefs.getString('presets');
       if(presetsString != null){
@@ -56,6 +70,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
         activityPresetStoreController.defaultActivity.value = defaultActivityPreset;
       }
     });
+  }
+
+  void _redirectBasedOnSignInStatus() {
+    if (_isSignedIn) {
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    } else {
+      // Implement logic for cases when the user is not signed in
+      // For example, you could show a login screen or another welcome screen
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
   }
 
   @override
