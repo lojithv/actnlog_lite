@@ -1,12 +1,14 @@
 import 'package:actnlog_lite/models/completed_activity.dart';
 import 'package:actnlog_lite/models/current_activity.dart';
 import 'package:actnlog_lite/store/current_activity_store.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:uuid/uuid.dart';
 
+import '../main.dart';
 import '../store/activity_preset_store.dart';
 import '../store/completed_activity_store.dart';
 import '../store/timer.dart';
@@ -19,6 +21,7 @@ class TimerWidget extends StatefulWidget {
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
+
   final TimerController timerController = Get.put(TimerController());
 
   final CurrentActivityStoreController currentActivityStoreController =
@@ -42,9 +45,88 @@ class _TimerWidgetState extends State<TimerWidget> {
     super.dispose();
   }
 
+  Future<void> handleStartTimer() async {
+    var uuid = const Uuid();
+
+    if (timerController.isRunning.value) {
+      final SharedPreferences prefs =
+          await _prefs;
+
+      timerController
+          .stopWatchTimerInstance
+          .onResetTimer();
+      timerController.isRunning
+          .trigger(false);
+      completedActivityStoreController
+          .completedActivityList
+          .add(CompletedActivity(
+          id: currentActivityStoreController
+              .currentActivity.value!
+              .id,
+          category: currentActivityStoreController
+              .currentActivity.value!
+              .category,
+          name: currentActivityStoreController
+              .currentActivity.value!
+              .name,
+          startTimeAndDate:
+          currentActivityStoreController
+              .currentActivity.value!
+              .startTimeAndDate,
+          endTimeAndDate:
+          DateTime.now()
+              .toIso8601String(),
+          duration: timerController
+              .stopWatchTimerInstance
+              .rawTime
+              .value));
+
+      // Encode and store data in SharedPreferences
+      String encodedData =
+      CompletedActivity.encode(
+          completedActivityStoreController
+              .getCompletedActivityList()
+              .cast());
+      prefs.setString(
+          "completedActivities",
+          encodedData);
+    } else {
+      timerController
+          .stopWatchTimerInstance
+          .onStartTimer();
+      timerController.isRunning
+          .trigger(true);
+      currentActivityStoreController
+          .currentActivity.value =
+          CurrentActivity(
+              id: uuid.v1(),
+              category: activityPresetStoreController
+                  .defaultActivity
+                  .value!
+                  .category,
+              name:
+              activityPresetStoreController
+                  .defaultActivity
+                  .value!
+                  .name,
+              startTimeAndDate:
+              DateTime.now()
+                  .toIso8601String());
+
+      // Create a new user with a first and last name
+      final ongoingActivity = <String, dynamic>{
+        "userid": "Ada",
+        "start": "Lovelace",
+        "activityid": 1815
+      };
+
+      db.collection("ongoing").add(ongoingActivity).then((DocumentReference doc) =>
+          print('DocumentSnapshot added with ID: ${doc.id}'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var uuid = const Uuid();
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -142,72 +224,8 @@ class _TimerWidgetState extends State<TimerWidget> {
                                         const Color.fromRGBO(21, 55, 122, 1.0),
                                     child: IconButton(
                                         iconSize: 30,
-                                        onPressed: () async {
-                                          if (timerController.isRunning.value) {
-                                            final SharedPreferences prefs =
-                                                await _prefs;
-
-                                            timerController
-                                                .stopWatchTimerInstance
-                                                .onResetTimer();
-                                            timerController.isRunning
-                                                .trigger(false);
-                                            completedActivityStoreController
-                                                .completedActivityList
-                                                .add(CompletedActivity(
-                                                    id: currentActivityStoreController
-                                                        .currentActivity.value!
-                                                        .id,
-                                                    category: currentActivityStoreController
-                                                        .currentActivity.value!
-                                                        .category,
-                                                    name: currentActivityStoreController
-                                                        .currentActivity.value!
-                                                        .name,
-                                                    startTimeAndDate:
-                                                        currentActivityStoreController
-                                                            .currentActivity.value!
-                                                            .startTimeAndDate,
-                                                    endTimeAndDate:
-                                                        DateTime.now()
-                                                            .toIso8601String(),
-                                                    duration: timerController
-                                                        .stopWatchTimerInstance
-                                                        .rawTime
-                                                        .value));
-
-                                            // Encode and store data in SharedPreferences
-                                            String encodedData =
-                                                CompletedActivity.encode(
-                                                    completedActivityStoreController
-                                                        .getCompletedActivityList()
-                                                        .cast());
-                                            prefs.setString(
-                                                "completedActivities",
-                                                encodedData);
-                                          } else {
-                                            timerController
-                                                .stopWatchTimerInstance
-                                                .onStartTimer();
-                                            timerController.isRunning
-                                                .trigger(true);
-                                            currentActivityStoreController
-                                                    .currentActivity.value =
-                                                CurrentActivity(
-                                                    id: uuid.v1(),
-                                                    category: activityPresetStoreController
-                                                        .defaultActivity
-                                                        .value!
-                                                        .category,
-                                                    name:
-                                                        activityPresetStoreController
-                                                            .defaultActivity
-                                                            .value!
-                                                            .name,
-                                                    startTimeAndDate:
-                                                        DateTime.now()
-                                                            .toIso8601String());
-                                          }
+                                        onPressed: (){
+                                          handleStartTimer();
                                         },
                                         icon: Obx(() => Icon(
                                               timerController.isRunning.isTrue

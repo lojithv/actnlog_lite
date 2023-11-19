@@ -5,13 +5,13 @@ import 'package:actnlog_lite/pages/login.dart';
 import 'package:actnlog_lite/pages/settings.dart';
 import 'package:actnlog_lite/pages/loading_screen.dart';
 import 'package:actnlog_lite/pages/timer_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'firebase_options.dart';
 
@@ -27,11 +27,17 @@ Future<void> main() async {
   );
   auth = FirebaseAuth.instanceFor(app: app);
 
+  FirebaseFirestore.instance.settings = Settings(
+    persistenceEnabled: true,
+    // other settings...
+  );
+
   runApp(const MyApp());
 }
 
-final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+FirebaseFirestore db = FirebaseFirestore.instance;
 
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -62,7 +68,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoadingScreen(),
         '/login':(context)=>const LoginPage(),
         '/home': (context) => const HomePage(),
-        '/settings': (context) => const Settings(),
+        '/settings': (context) => const SettingsPage(),
         '/timer': (context) => const TimerView()
       },
     );

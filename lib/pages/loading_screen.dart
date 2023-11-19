@@ -1,15 +1,20 @@
 import 'dart:convert';
 
+import 'package:actnlog_lite/main.dart';
 import 'package:actnlog_lite/models/activity_preset.dart';
 import 'package:actnlog_lite/models/completed_activity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/current_activity.dart';
 import '../store/activity_preset_store.dart';
 import '../store/completed_activity_store.dart';
+import '../store/current_activity_store.dart';
+import '../store/timer.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -28,6 +33,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
+  final TimerController timerController = Get.put(TimerController());
+
+  final CurrentActivityStoreController currentActivityStoreController =
+  Get.put(CurrentActivityStoreController());
+
   final ActivityPresetStoreController activityPresetStoreController =
   Get.put(ActivityPresetStoreController());
 
@@ -42,6 +52,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
         setState(() {
           _isSignedIn = account != null;
         });
+        String? userid =  _googleSignIn.currentUser?.id;
+        if(userid != null){
+          print(userid);
+          loadDatafromDB(userid);
+        }
         // Redirect based on sign-in status
         _redirectBasedOnSignInStatus();
       });
@@ -70,6 +85,39 @@ class _LoadingScreenState extends State<LoadingScreen> {
         activityPresetStoreController.defaultActivity.value = defaultActivityPreset;
       }
     });
+  }
+
+  Future<void> loadDatafromDB(String userid) async {
+    // Reference to the collection
+    CollectionReference<Map<String, dynamic>> ongoing = db.collection('ongoing');
+
+    // Query for the user with the given user ID
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await ongoing.where('userid', isEqualTo: "Ada").get();
+
+    // Check if the query returned any documents
+    if (querySnapshot.docs.isNotEmpty) {
+      // Return the first document (assuming userId is unique)
+
+      print(querySnapshot.docs.first.data());
+      timerController
+          .stopWatchTimerInstance
+          .onStartTimer();
+      timerController.isRunning
+          .trigger(true);
+      currentActivityStoreController
+          .currentActivity.value =
+          CurrentActivity(
+              id: "test",
+              category: "test",
+              name:
+              "test",
+              startTimeAndDate:
+              DateTime.now()
+                  .toIso8601String());
+    } else {
+      // Return null if no matching user is found
+      null;
+    }
   }
 
   void _redirectBasedOnSignInStatus() {

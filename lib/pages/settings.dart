@@ -12,14 +12,14 @@ import '../store/activity_preset_store.dart';
 import '../store/completed_activity_store.dart';
 import '../store/current_activity_store.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsPageState extends State<SettingsPage> {
   String text = "Stop Service";
 
   final Uri _url = Uri.parse('https://www.buymeacoffee.com/lojithvdev');

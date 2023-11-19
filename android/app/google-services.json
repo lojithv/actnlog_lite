@@ -12,12 +12,7 @@
           "package_name": "com.lojithvdev.actnlog_lite"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "189945015099-usmk09r6m2neen2gcisi5nllomiogskb.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyDVJUuQ_nqWUz1-0mNWsOmPEjXBWG-2_Ns"
