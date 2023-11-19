@@ -99,6 +99,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
       // Return the first document (assuming userId is unique)
 
       print(querySnapshot.docs.first.data());
+
+      // Get the current time
+      // Parse the start time string to DateTime
+      DateTime startTime = DateTime.parse(querySnapshot.docs.first.data()['start']);
+      DateTime currentTime = DateTime.now();
+      timerController
+          .stopWatchTimerInstance
+          .setPresetTime(mSec: currentTime.difference(startTime).inMilliseconds);
       timerController
           .stopWatchTimerInstance
           .onStartTimer();
@@ -112,8 +120,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
               name:
               "test",
               startTimeAndDate:
-              DateTime.now()
-                  .toIso8601String());
+              querySnapshot.docs.first.data()['start']);
     } else {
       // Return null if no matching user is found
       null;

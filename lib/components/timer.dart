@@ -116,7 +116,8 @@ class _TimerWidgetState extends State<TimerWidget> {
       // Create a new user with a first and last name
       final ongoingActivity = <String, dynamic>{
         "userid": "Ada",
-        "start": "Lovelace",
+        "start": DateTime.now()
+            .toIso8601String(),
         "activityid": 1815
       };
 
